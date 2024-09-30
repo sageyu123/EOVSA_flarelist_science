@@ -4,6 +4,7 @@ import astropy.units as u
 from sunpy.coordinates import get_body_heliographic_stonyhurst, get_horizons_coord
 from astropy.time import Time
 from scipy.interpolate import interp1d
+import numpy as np
 
 
 # Determine the path of the current script
@@ -30,13 +31,27 @@ common_flares = pd.merge_asof(df_stix_flare_sorted, df_eovsa_flare_sorted,
                               direction='nearest',
                               tolerance=pd.Timedelta('5 minutes'))
 
-# Drop rows where EO_tpeak is missing (NaN)
-common_flares_cleaned = common_flares.dropna(subset=['EO_tpeak'])
+common_flares.dropna(subset=['EO_xcen', 'hpc_x_earth'], inplace=True)
 
-flare_timestamps_mjd = Time(common_flares_cleaned['EO_tpeak']).mjd
+common_flares.drop_duplicates(inplace=True)
+
+
+# Drop rows where EO_tpeak is missing (NaN)
+common_flares.dropna(subset=['EO_tpeak'], inplace=True)
+
+
+
+# Calculate the Euclidean distance between the two sets of coordinates
+distance = np.sqrt((common_flares['EO_xcen'] - common_flares['hpc_x_earth'])**2 +
+                   (common_flares['EO_ycen'] - common_flares['hpc_y_earth'])**2)
+
+# Filter out rows where the distance is greater than 100
+common_flares = common_flares[distance <= 100]
+
+flare_timestamps_mjd = Time(common_flares['EO_tpeak']).mjd
 
 # Fetch the location of Earth for the given time range
-flare_peak_times = Time(list(common_flares_cleaned['EO_tpeak'].values))
+flare_peak_times = Time(list(common_flares['EO_tpeak'].values))
 time_range = [flare_peak_times[0], flare_peak_times[-1]]
 earth_coord = get_body_heliographic_stonyhurst('Earth', time_range)
 
@@ -53,14 +68,14 @@ lat_interpolator = interp1d(earth_timestamps.mjd, earth_lat, fill_value="extrapo
 radius_interpolator = interp1d(earth_timestamps.mjd, earth_radius, fill_value="extrapolate")
 
 # Use interpolators to generate values for the filtered flare timestamps
-common_flares_cleaned.loc[:, 'earth_position_lon'] = lon_interpolator(flare_timestamps_mjd)
-common_flares_cleaned.loc[:, 'earth_position_lat'] = lat_interpolator(flare_timestamps_mjd)
-common_flares_cleaned.loc[:, 'earth_position_AU_distance'] = radius_interpolator(flare_timestamps_mjd)
+common_flares.loc[:, 'earth_position_lon'] = lon_interpolator(flare_timestamps_mjd)
+common_flares.loc[:, 'earth_position_lat'] = lat_interpolator(flare_timestamps_mjd)
+common_flares.loc[:, 'earth_position_AU_distance'] = radius_interpolator(flare_timestamps_mjd)
 
 
 
 # Save the merged DataFrame to a new CSV file
 outfile = os.path.join(script_dir, 'EOVSA_STIX_joint_flarelist.csv')
-common_flares_cleaned.to_csv(outfile, index=False)
+common_flares.to_csv(outfile, index=False)
 
 print(f"Joint flare list saved to {outfile}")

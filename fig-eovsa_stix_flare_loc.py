@@ -65,7 +65,7 @@ def flare_class_to_linear_scale(flare_class):
 
 os.chdir('/Users/fisher/myworkspace')
 
-data_directory = '/Users/fisher/Library/CloudStorage/Dropbox/PycharmProjects/EOVSA_flarelist/generate_flarelist'
+data_directory = '/Users/fisher/Library/CloudStorage/Dropbox/PycharmProjects/EOVSA_flarelist_science/generate_flarelist'
 df_flare = pd.read_csv(os.path.join(data_directory, 'EOVSA_STIX_joint_flarelist.csv'))
 
 # Filter rows based on certain conditions
@@ -271,9 +271,10 @@ cbar.ax.xaxis.set_ticks_position('top')
 cbar.ax.xaxis.set_label_position('top')
 
 # Save the plot
-# fig.savefig('fig-eovsa_stix_flare_loc.pdf', dpi=300)
+fig.tight_layout()
+# fig.savefig('fig-eovsa_stix_flare_loc.v2.pdf', dpi=300)
 
-fig_stat, axs_stat = plt.subplots(ncols=1, nrows=4, figsize=(3.5, 6))
+fig_stat, axs_stat = plt.subplots(ncols=1, nrows=5, figsize=(3.5, 7.5))
 # Sample modified code for plotting flare classes with different colors
 
 flare_class_colors = {
@@ -306,14 +307,14 @@ hpc_y[idx_excess_r] = hpc_y[idx_excess_r] * 0.96
 flare_coords2 = SkyCoord(hpc_x.values * u.arcsec, hpc_y.values * u.arcsec, obstime=flare_peak_times,
                          observer='earth', frame=frames.Helioprojective)
 # angles_flare = solo_coords.separation(flare_coords).deg
-angles_flare = (flare_coords2.transform_to(solo_coords).lon - solo_coords.lon).value
-idx_wrap = angles_flare<-180
-angles_flare[idx_wrap] = angles_flare[idx_wrap]+360
-angles_flare[angles_flare>90] = 90
-angles_flare[angles_flare<-90] = -90
+angles_flare_solo = (flare_coords2.transform_to(solo_coords).lon - solo_coords.lon).value
+idx_wrap = angles_flare_solo < -180
+angles_flare_solo[idx_wrap] = angles_flare_solo[idx_wrap] + 360
+angles_flare_solo[angles_flare_solo > 90] = 90
+angles_flare_solo[angles_flare_solo < -90] = -90
 
 df_flare_filtered['angles'] = angles
-df_flare_filtered['angles_flare'] = angles_flare
+df_flare_filtered['angles_flare_solo'] = angles_flare_solo
 
 # Separate data by flare class
 angles_data = {
@@ -323,11 +324,18 @@ angles_data = {
     5: df_flare_filtered[df_flare_filtered['numeric_class'] == 5]['angles'].values
 }
 
-angles_flare_data = {
-    2: df_flare_filtered[df_flare_filtered['numeric_class'] == 2]['angles_flare'].values,
-    3: df_flare_filtered[df_flare_filtered['numeric_class'] == 3]['angles_flare'].values,
-    4: df_flare_filtered[df_flare_filtered['numeric_class'] == 4]['angles_flare'].values,
-    5: df_flare_filtered[df_flare_filtered['numeric_class'] == 5]['angles_flare'].values
+angles_flare_solo_data = {
+    2: df_flare_filtered[df_flare_filtered['numeric_class'] == 2]['angles_flare_solo'].values,
+    3: df_flare_filtered[df_flare_filtered['numeric_class'] == 3]['angles_flare_solo'].values,
+    4: df_flare_filtered[df_flare_filtered['numeric_class'] == 4]['angles_flare_solo'].values,
+    5: df_flare_filtered[df_flare_filtered['numeric_class'] == 5]['angles_flare_solo'].values
+}
+
+angles_flare_earth_data = {
+    2: df_flare_filtered[df_flare_filtered['numeric_class'] == 2]['hgs_lon'].values,
+    3: df_flare_filtered[df_flare_filtered['numeric_class'] == 3]['hgs_lon'].values,
+    4: df_flare_filtered[df_flare_filtered['numeric_class'] == 4]['hgs_lon'].values,
+    5: df_flare_filtered[df_flare_filtered['numeric_class'] == 5]['hgs_lon'].values
 }
 
 ax_angle = axs_stat[1]
@@ -353,7 +361,7 @@ ax_angle_flare = axs_stat[2]
 # fig_angle, ax_angle = plt.subplots(figsize=(4, 2))
 
 # ax_angle_flare.hist(angles_flare, bins=10, color=custom_cmap(0.9), edgecolor=custom_cmap(0.9), lw=0.5, alpha=1.0)
-ax_angle_flare.hist([angles_flare_data[2], angles_flare_data[3], angles_flare_data[4], angles_flare_data[5]], bins=12,
+ax_angle_flare.hist([angles_flare_solo_data[2], angles_flare_solo_data[3], angles_flare_solo_data[4], angles_flare_solo_data[5]], bins=12,
                     stacked=True, color=colors,
                     label=labels, lw=0.5, alpha=1.0)
 ax_angle_flare.set_xlabel(r'Longtitude in $SolO$ view [deg]')
@@ -363,6 +371,19 @@ ax_angle_flare.legend(loc='best', framealpha=0.15, facecolor='gray', edgecolor='
 ax_angle_flare.set_xticks(np.arange(-90, 91, 45))
 # # fig_angle.tight_layout()
 # # fig_angle.savefig('fig-angle_histogram.pdf', dpi=300)
+
+
+ax_angle_earth = axs_stat[3]
+# Plotting the histogram
+
+ax_angle_earth.hist([angles_flare_earth_data[2], angles_flare_earth_data[3], angles_flare_earth_data[4], angles_flare_earth_data[5]], bins=12,
+                    stacked=True, color=colors,
+                    label=labels, lw=0.5, alpha=1.0)
+ax_angle_earth.set_xlabel(r'Longtitude in $Earth$ view [deg]')
+ax_angle_earth.set_ylabel('# of Flares')
+ax_angle_earth.legend(loc='best', framealpha=0.15, facecolor='gray', edgecolor='none', ncol=2, handlelength=1.,
+                      handletextpad=0.2, columnspacing=0.75)
+ax_angle_earth.set_xticks(np.arange(-90, 91, 45))
 
 
 # Plotting the histogram for flare classes
@@ -398,7 +419,7 @@ df_flare_filtered['peak_UTC'] = pd.to_datetime(df_flare_filtered['peak_UTC'])
 
 egs = ['4-10 keV', '25-50 keV']
 # egs = ['4-10 keV', '50-84 keV']
-ax_flux = axs_stat[3]
+ax_flux = axs_stat[4]
 # Set the y-axis to a logarithmic scale and plot the data
 # fig_flux, ax_flux = plt.subplots(figsize=(4, 2))
 df_flare_filtered.plot(x='peak_UTC', y=egs, ax=ax_flux,
@@ -418,4 +439,4 @@ ax_flux.legend(loc='best', framealpha=0.8, facecolor='w', edgecolor='none')
 # fig_flux.tight_layout()
 # fig_flux.savefig('fig-stix_counts.pdf', dpi=300)
 fig_stat.tight_layout()
-# fig_stat.savefig('fig-flare_statistics.pdf', dpi=300)
+# fig_stat.savefig('fig-flare_statistics.v2.pdf', dpi=300)
