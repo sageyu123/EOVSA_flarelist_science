@@ -18,11 +18,14 @@ This repository contains tools for identifying and visualizing joint flare event
 ### Output Files
 
 - **Flare Locations Plot**  
-  ![Heliographic Plot](./fig-eovsa_stix_flare_loc.png)  
+
+<img src="./fig-eovsa_stix_flare_loc.png" alt="Flare Locations Plot" width="400"/>
+
   [PDF](./fig-eovsa_stix_flare_loc.pdf)
 
 - **Flare Statistics**  
-  ![Flare Statistics](./fig-flare_statistics.png)  
+<img src="./fig-flare_statistics.png" alt="Flare Statistics" width="400"/>
+
   [PDF](./fig-flare_statistics.pdf)
 
 ## Usage
