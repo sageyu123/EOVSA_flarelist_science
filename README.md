@@ -1,6 +1,6 @@
 # EOVSA Flare List Science Repository
 
-This repository contains tools for identifying and visualizing joint flare events recorded by EOVSA (Expanded Owens Valley Solar Array) and STIX (Spectrometer/Telescope for Imaging X-rays). It facilitates the comparison and analysis of flare characteristics captured by both instruments.
+This repository contains tools for identifying and visualizing joint flare events recorded by EOVSA and Solar Orbiter/STIX. It facilitates the comparison and analysis of flare characteristics captured by both instruments.
 
 ## Repository Structure
 
