@@ -7,12 +7,12 @@ This repository contains tools for identifying and visualizing joint flare event
 ### Main Functionality
 
 1. **Joint Flare Event Generation**
-   - **Script**: `generate_flarelist/find_common_event.py`
-   - **Description**: This script cross-references flare events from EOVSA and STIX to identify common occurrences. It utilizes the STIX flare list available at [stix_flarelist_science](https://github.com/hayesla/stix_flarelist_science) and the EOVSA flare list from the [EOVSA Wiki Page](https://www.ovsa.njit.edu/wiki/index.php/Expanded_Owens_Valley_Solar_Array#EOVSA_Flare_List). The identified joint events are saved to `generate_flarelist/EOVSA_STIX_joint_flarelist.csv`.
+   - **Script**: [`generate_flarelist/find_common_event.py`](./generate_flarelist/find_common_event.py)
+   - **Description**: This script cross-references flare events from EOVSA and STIX to identify common occurrences. It utilizes the STIX flare list available at [stix_flarelist_science](https://github.com/hayesla/stix_flarelist_science) and the EOVSA flare list from the [EOVSA Wiki Page](https://www.ovsa.njit.edu/wiki/index.php/Expanded_Owens_Valley_Solar_Array#EOVSA_Flare_List). The identified joint events are saved to [`EOVSA_STIX_joint_flarelist.csv`](./generate_flarelist/EOVSA_STIX_joint_flarelist.csv).
 
 2. **Flare Location and Statistics Visualization**
-   - **Script**: `fig-eovsa_stix_flare_loc.py`
-   - **Description**: This script takes `EOVSA_STIX_joint_flarelist.csv` as input and generates plots illustrating the locations and magnitudes of the joint flare events on a heliographic map. It also produces a statistical plot displaying histograms of flare class, locations, and X-ray counts.
+   - **Script**: [`fig-eovsa_stix_flare_loc.py`](./fig-eovsa_stix_flare_loc.py)
+   - **Description**: This script takes [`EOVSA_STIX_joint_flarelist.csv`](./generate_flarelist/EOVSA_STIX_joint_flarelist.csv) as input and generates plots illustrating the locations and magnitudes of the joint flare events on a heliographic map. It also produces a statistical plot displaying histograms of flare class, locations, and X-ray counts.
    - **Interactive Feature**: The script supports interactive selection of flare events on the plot, allowing users to click on events and return a subset of the flares in the terminal. Because of this interactive feature, running `python fig-eovsa_stix_flare_loc.py` as a standalone script may not fully utilize the interactive functionality.
 
 ### Output Files
