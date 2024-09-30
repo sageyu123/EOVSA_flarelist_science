@@ -17,8 +17,13 @@ This repository contains tools for identifying and visualizing joint flare event
 
 ### Output Files
 
-- [fig-eovsa_stix_flare_loc.pdf](./fig-eovsa_stix_flare_loc.pdf) - Heliographic plot of flare locations and magnitudes.
-- [fig-flare_statistics.pdf](./fig-flare_statistics.pdf) - Histogram of flare class, locations, and X-ray counts.
+- **Flare Locations Plot**  
+  ![Heliographic Plot](./fig-eovsa_stix_flare_loc.png)  
+  [PDF](./fig-eovsa_stix_flare_loc.pdf)
+
+- **Flare Statistics**  
+  ![Flare Statistics](./fig-flare_statistics.png)  
+  [PDF](./fig-flare_statistics.pdf)
 
 ## Usage
 
